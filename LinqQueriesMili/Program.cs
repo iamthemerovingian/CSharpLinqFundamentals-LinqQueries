@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using LinqQueries;
 using EmployeeExtensions;
+using System.Linq.Dynamic;
 
 namespace LinqQueriesMili
 {
@@ -12,9 +13,64 @@ namespace LinqQueriesMili
     {
         static void Main(string[] args)
         {
-            SingleEmployeeQueries();
-            UseLetKeyword();
-            UseGroup();    
+            //SingleEmployeeQueries();
+            //UseLetKeyword();
+            //UseGroup();
+            //UseJoin();
+            //Composition();
+            DynamicQuery();
+        }
+
+        private static void DynamicQuery()
+        {
+            var repository = new EmployeeRepository();
+
+            var query =
+                repository.GetAll()
+                .AsQueryable()
+                .OrderBy("Name")
+                .Where("DepartmentID = 1");
+
+            Write(query);
+        }
+
+        private static void Composition()
+        {
+            var repository = new EmployeeRepository();
+
+            var query =
+                from e in repository.GetByDepartmentID(1)
+                where e.Name.Length < 6
+                select e;
+
+            Write(query);
+        }
+
+        private static void UseJoin()
+        {
+            var employeesRepository = new EmployeeRepository();
+            var departmentRepository = new DepartmentRepository();
+
+            var query =
+                from d in departmentRepository.GetAll()
+                join e in employeesRepository.GetAll()
+                 on
+                    d.ID equals e.DepartmentID
+                    into ed
+                select new
+                {
+                    Department = d.Name,
+                    Employees = ed
+                };
+
+            foreach (var group in query)
+            {
+                Console.WriteLine(group.Department);
+                foreach (var employee in group.Employees)
+                {
+                    Console.WriteLine("\t" + employee.Name);
+                }
+            }
         }
 
         private static void UseGroup()
