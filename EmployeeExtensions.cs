@@ -20,7 +20,7 @@ namespace EmployeeExtensionsWrong
                     list.Add(employee);
                 }
             }
-            return list; // This method will make the where keyword do work every time it is called.
+            return list; // This method will make the where keyword do work every time it is called. This is greedy.
         }
     }
 }
@@ -35,7 +35,7 @@ namespace EmployeeExtensions
             {
                 if (predicate(e))
                 {
-                    yield return e; //This yield return allows the code to be lazy and only return when the query is excecuted and not when it is called.
+                    yield return e; //This yield return allows the code to be lazy and only return when the query is excecuted and not when it is called. This is called deffered excecution. This is lazy.
                 }
             }
         }
